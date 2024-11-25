@@ -49,3 +49,23 @@ test("404 error with custom message saying not found", () => {
       expect(body.msg).toBe("Not Found");
     });
 });
+
+describe("GET /api/articles/:article_id", () => {
+  test("200: responds with the correct article when passed an article id", () => {
+    return request(app)
+      .get("/api/articles/5")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.article_id).toBe(5);
+        expect(articles).toMatchObject({
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+});

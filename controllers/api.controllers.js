@@ -1,5 +1,5 @@
 const endpointsJSON = require("../endpoints.json");
-const { fetchTopics } = require("../models/models");
+const { fetchTopics, fetchArticles } = require("../models/models");
 
 function getApi(req, res) {
   console.log(endpointsJSON, "<----- enpoints.json");
@@ -17,4 +17,11 @@ function getAllTopics(req, res, next) {
     });
 }
 
-module.exports = { getApi, getAllTopics };
+function getArticles(req, res) {
+  const { article_id } = req.params;
+  fetchArticles(article_id).then((articles) => {
+    res.status(200).send({ articles });
+  });
+}
+
+module.exports = { getApi, getAllTopics, getArticles };
