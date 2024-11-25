@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe("GET /api", () => {
-  test.only("200: Responds with an object detailing the documentation for each endpoint", () => {
+  test("200: Responds with an object detailing the documentation for each endpoint", () => {
     return request(app)
       .get("/api")
       .expect(200)
@@ -22,4 +22,30 @@ describe("GET /api", () => {
         expect(endpoints).toEqual(endpointsJSON);
       });
   });
+});
+
+describe("GET /api/topics", () => {
+  test("returns with an array with the properties of slug and description", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        expect(topics).toHaveLength(data.topicData.length);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            description: expect.any(String),
+            slug: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
+test("404 error with custom message saying not found", () => {
+  return request(app)
+    .get("/noturl")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Not Found");
+    });
 });
