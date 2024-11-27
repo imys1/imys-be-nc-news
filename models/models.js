@@ -34,4 +34,19 @@ ORDER BY articles.created_at DESC;`;
   });
 }
 
-module.exports = { fetchTopics, fetchArticles, fetchAllArticles };
+function fetchComments(article_id) {
+  const query = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`;
+  return db.query(query, [article_id]).then(({ rows, rowCount }) => {
+    if (rowCount === 0) {
+      return Promise.reject({ status: 404 });
+    }
+    return rows;
+  });
+}
+
+module.exports = {
+  fetchTopics,
+  fetchArticles,
+  fetchAllArticles,
+  fetchComments,
+};

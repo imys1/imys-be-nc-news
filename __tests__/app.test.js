@@ -90,7 +90,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test.only("returns with an array of article objects sorted by created_at in descending order ", () => {
+  test("returns with an array of article objects sorted by created_at in descending order ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -100,4 +100,32 @@ describe("GET /api/articles", () => {
         });
       });
   });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("returns array of comments with appropriate properties", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(2);
+      });
+  });
+});
+test("comments should return the most recent one first ", () => {
+  return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(({ body: { comments } }) => {
+      expect(comments).toBeSorted({ descending: true });
+    });
+});
+
+test.only("404 error for endpoint request to non existent articles ", () => {
+  return request(app)
+    .get("/api/articles/98/comments")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("URL not found");
+    });
 });
