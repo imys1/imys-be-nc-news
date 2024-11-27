@@ -4,17 +4,16 @@ const {
   fetchArticles,
   fetchAllArticles,
   fetchComments,
+  postComments,
 } = require("../models/models");
 
 function getApi(req, res) {
-  console.log(endpointsJSON, "<----- enpoints.json");
   res.status(200).send({ endpoints: endpointsJSON });
 }
 
 function getAllTopics(req, res, next) {
   fetchTopics()
     .then((topics) => {
-      console.log(topics);
       res.status(200).send({ topics });
     })
     .catch((err) => {
@@ -49,10 +48,26 @@ function getComments(req, res, next) {
     .catch(next);
 }
 
+function addComment(req, res, next) {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+  fetchArticles(article_id)
+    .then(() => {
+      return postComments(username, body, article_id);
+    })
+    .then((newComment) => {
+      res.status(201).send({ newComment });
+    })
+    .catch(next);
+}
+
+// find article to post comment too
+
 module.exports = {
   getApi,
   getAllTopics,
   getArticles,
   getAllArticles,
   getComments,
+  addComment,
 };

@@ -11,6 +11,12 @@ function fetchArticles(articleId) {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [articleId])
     .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `Article ${articleId} not found`,
+        });
+      }
       return rows[0];
     });
 }
@@ -44,9 +50,26 @@ function fetchComments(article_id) {
   });
 }
 
+function postComments(username, body, article_id) {
+  return db
+    .query(
+      `INSERT INTO comments
+    (author, body, article_id)
+    VALUES ($1, $2 , $3)
+    RETURNING *;
+`,
+
+      [username, body, article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticles,
   fetchAllArticles,
   fetchComments,
+  postComments,
 };
