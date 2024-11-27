@@ -77,8 +77,12 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).toBeGreaterThan(0);
+
         articles.forEach((article) => {
           expect(article).toMatchObject({
+            article_id: expect.any(Number),
             title: expect.any(String),
             topic: expect.any(String),
             author: expect.any(String),
@@ -121,11 +125,87 @@ test("comments should return the most recent one first ", () => {
     });
 });
 
-test.only("404 error for endpoint request to non existent articles ", () => {
+test("400 error for endpoint request to non existent articles ", () => {
   return request(app)
     .get("/api/articles/98/comments")
     .expect(404)
     .then(({ body }) => {
-      expect(body.msg).toBe("URL not found");
+      expect(body.msg).toBe("Article 98 not found");
+    });
+});
+
+describe("POST/api/articles/:article_id/comments", () => {
+  test("it will return the posted comment with a username and body", () => {
+    const newComment = { username: "icellusedkars", body: "It's a good day" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.newComment).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          })
+        );
+      });
+  });
+});
+test("returns a bad request 400 for usernames not in database", () => {
+  const newComment = {
+    username: "Marcus5152",
+    body: "Can I plz leave a comment",
+  };
+
+  return request(app)
+    .post(`/api/articles/2/comments`)
+    .send(newComment)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Bad Request");
+    });
+});
+
+test("returns 'Article Not Found' and status code 404 when comments are made to non existent articles", () => {
+  const newComment = {
+    username: "rogersop",
+    body: "I love article 1256",
+  };
+
+  return request(app)
+    .post(`/api/articles/1256/comments`)
+    .send(newComment)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Article 1256 not found");
+    });
+});
+
+test("returns bad request for comments with wrong keys example not username/body ", () => {
+  const newComment = {
+    profileName: "SSJGoku101",
+    torso: "Hello my name is Goku",
+  };
+
+  return request(app)
+    .post(`/api/articles/2/comments`)
+    .send(newComment)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Bad Request");
+    });
+});
+
+test("returns a bad request when an empty object is sent through", () => {
+  return request(app)
+    .post(`/api/articles/2/comments`)
+    .send({})
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Bad Request");
     });
 });
