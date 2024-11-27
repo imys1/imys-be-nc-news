@@ -5,12 +5,14 @@ const {
   getAllTopics,
   getArticles,
   getAllArticles,
+  getComments,
 } = require("./controllers/api.controllers");
 
 app.get("/api", getApi);
 app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticles);
 app.get("/api/articles/", getAllArticles);
+app.get("/api/articles/:article_id/comments", getComments);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not Found" });
@@ -19,6 +21,10 @@ app.all("*", (req, res) => {
 app.use((err, req, res, next) => {
   console.log(err.code);
   next();
+});
+
+app.use((req, res, next) => {
+  res.status(404).send({ msg: "URL not found" });
 });
 
 app.use((req, res) => {
