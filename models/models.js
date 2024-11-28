@@ -66,10 +66,18 @@ function postComments(username, body, article_id) {
     });
 }
 
+function alterVotes(article_id, inc_votes) {
+  const queryToUpdate = `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *`;
+  return db.query(queryToUpdate, [inc_votes, article_id]).then(({ rows }) => {
+    return rows;
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticles,
   fetchAllArticles,
   fetchComments,
   postComments,
+  alterVotes,
 };
