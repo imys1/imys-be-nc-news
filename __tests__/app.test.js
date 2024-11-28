@@ -345,3 +345,52 @@ test("returns 404 error with a custom message folowing user inputting wrong endp
 });
 
 
+describe.only("QUERY/api/articles", () => {
+  test("sort articles by article id in descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("article_id", { descending: true });
+      });
+  });
+});
+
+test("be able to specificy article order so ascending or descending", () => {
+  return request(app)
+    .get("/api/articles?topic=mitch&&sort_by=article_id&&order=asc")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toBeSortedBy("article_id", { descending: false });
+    });
+});
+
+test("default to sorting by created_at in desc order when sort_by is not provided", () => {
+  return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toBeSortedBy("created_at", { descending: true });
+    });
+});
+
+test("return 'Query request invalid!' for invalid sort by", () => {
+  return request(app)
+    .get("/api/articles?sort_by=apples")
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe("Invalid sort_by or order query");
+    });
+});
+
+test("return 'Query request invalid!' for invalid order", () => {
+  return request(app)
+    .get("/api/articles?order=Broly")
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe("Invalid sort_by or order query");
+    });
+});
+
+
+

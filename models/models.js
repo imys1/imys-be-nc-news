@@ -21,7 +21,25 @@ function fetchArticles(articleId) {
     });
 }
 
-function fetchAllArticles() {
+function fetchAllArticles(sort_by = "created_at", order = "desc") {
+  const validSortBy = [
+    "article_id",
+    "title",
+    "author",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+  ];
+  const validOrder = ["asc", "desc"];
+
+  if (!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid sort_by or order query",
+    });
+  }
+
   const queryText = `SELECT
   articles.article_id,
   articles.title,
@@ -34,7 +52,7 @@ function fetchAllArticles() {
 FROM articles
 LEFT JOIN comments ON comments.article_id = articles.article_id
 GROUP BY articles.article_id
-ORDER BY articles.created_at DESC;`;
+ORDER BY ${sort_by} ${order};`;
   return db.query(queryText).then(({ rows }) => {
     return rows;
   });
