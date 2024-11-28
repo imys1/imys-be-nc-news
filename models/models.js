@@ -103,11 +103,14 @@ function deleteComment(comment_id) {
       }
     });
 }
+
 function fetchUsers() {
   return db.query(`SELECT * FROM users`).then(({ rows: users }) => {
     return users;
   });
 }
+
+
 
 module.exports = {
   fetchTopics,
@@ -117,5 +120,7 @@ module.exports = {
   postComments,
   alterVotes,
   deleteComment,
-  fetchUsers,
+fetchUsers,
+
+
 };
