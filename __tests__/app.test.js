@@ -313,3 +313,35 @@ test("returns a 'bad request' when trying to delete with a word instead of a num
       expect(res.body.msg).toBe(`Bad Request`);
     });
 });
+
+
+describe("GET/api/users", () => {
+  test("it will return an array of users with the properties avatar url, name and the username", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              avatar_url: expect.any(String),
+              name: expect.any(String),
+              username: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
+
+test("returns 404 error with a custom message folowing user inputting wrong endpoint url", () => {
+  return request(app)
+    .get("/api/userzzz")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Not Found");
+    });
+});
+
+

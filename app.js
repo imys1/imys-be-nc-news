@@ -9,6 +9,9 @@ const {
   addComment,
   updateVotes,
   removeComment,
+ getAllUsers,
+
+
 } = require("./controllers/api.controllers");
 
 app.use(express.json());
@@ -21,6 +24,10 @@ app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", addComment);
 app.patch("/api/articles/:article_id", updateVotes);
 app.delete("/api/comments/:comment_id", removeComment);
+
+app.get("/api/users", getAllUsers);
+
+
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not Found" });
 });
