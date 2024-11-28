@@ -73,6 +73,19 @@ function alterVotes(article_id, inc_votes) {
   });
 }
 
+function deleteComment(comment_id) {
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [
+      comment_id,
+    ])
+    .then(({ rows }) => {
+      console.log(rows.length);
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Comment not found" });
+      }
+    });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticles,
@@ -80,4 +93,5 @@ module.exports = {
   fetchComments,
   postComments,
   alterVotes,
+  deleteComment,
 };
