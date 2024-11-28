@@ -314,6 +314,7 @@ test("returns a 'bad request' when trying to delete with a word instead of a num
     });
 });
 
+
 describe("GET/api/users", () => {
   test("it will return an array of users with the properties avatar url, name and the username", () => {
     return request(app)
@@ -342,3 +343,5 @@ test("returns 404 error with a custom message folowing user inputting wrong endp
       expect(body.msg).toBe("Not Found");
     });
 });
+
+
