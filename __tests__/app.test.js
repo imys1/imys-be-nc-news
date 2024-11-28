@@ -280,3 +280,36 @@ test("returns 'Bad Request' and the status code 400 for invalid paths", () => {
       expect(res.body.msg).toBe("Bad Request");
     });
 });
+
+describe("DELETE/api/comments/id", () => {
+  test("deletes the comment when given an ID and responds with a 204 status", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+});
+
+test("after a comment is deleted we should see a 404 eror as it should not exist", () => {
+  return request(app)
+    .get("/api/comments/1")
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe("Not Found");
+    });
+});
+
+test("will return 'Comment not found' when you try delete a non existent comment", () => {
+  return request(app)
+    .delete("/api/comments/555")
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe(`Comment not found`);
+    });
+});
+
+test("returns a 'bad request' when trying to delete with a word instead of a number", () => {
+  return request(app)
+    .delete("/api/comments/dawnblade")
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe(`Bad Request`);
+    });
+});

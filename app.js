@@ -8,6 +8,7 @@ const {
   getComments,
   addComment,
   updateVotes,
+  removeComment,
 } = require("./controllers/api.controllers");
 
 app.use(express.json());
@@ -19,7 +20,7 @@ app.get("/api/articles/", getAllArticles);
 app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", addComment);
 app.patch("/api/articles/:article_id", updateVotes);
-
+app.delete("/api/comments/:comment_id", removeComment);
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not Found" });
 });
@@ -28,7 +29,9 @@ app.use("*", (req, res, next) => {
   res.status(404).send({ msg: "URL not found" });
 });
 app.use((err, req, res, next) => {
-  if (err.code === "23502" || err.code === "23503" || err.code === "22PO2") {
+  console.log(err);
+
+  if (err.code === "23502" || err.code === "23503" || err.code === "22P02") {
     return res.status(400).send({ msg: "Bad Request" });
   }
   next(err);
