@@ -209,3 +209,74 @@ test("returns a bad request when an empty object is sent through", () => {
       expect(body.msg).toBe("Bad Request");
     });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("updates the article with the correct count vote incremented by 100", () => {
+    const votes = { inc_votes: 100 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(votes)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).toEqual({
+          article: [
+            {
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 200,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            },
+          ],
+        });
+      });
+  });
+});
+
+test("updates the article witht he vote count decremented by 75 ", () => {
+  const votes = { inc_votes: -75 };
+  return request(app)
+    .patch("/api/articles/1")
+    .send(votes)
+    .expect(200)
+    .then((res) => {
+      const articleTest = res.body.article;
+      articleTest.forEach((element) => {
+        expect(element.votes).toBe(25);
+      });
+    });
+});
+
+test("returns 'Bad Request for incorrect body requests'", () => {
+  return request(app)
+    .patch(`/api/articles/1`)
+    .send({ test_votes: false })
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe("Bad Request");
+    });
+});
+
+test("returns 'Article not found' and the status code 404 for articles that are not in the database", () => {
+  return request(app)
+    .patch(`/api/articles/5000`)
+    .send({ inc_votes: 20 })
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe("Article 5000 not found");
+    });
+});
+
+test("returns 'Bad Request' and the status code 400 for invalid paths", () => {
+  return request(app)
+    .patch(`/api/articles/apple`)
+    .send({ inc_votes: 20 })
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe("Bad Request");
+    });
+});

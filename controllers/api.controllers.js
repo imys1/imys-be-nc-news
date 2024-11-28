@@ -5,6 +5,7 @@ const {
   fetchAllArticles,
   fetchComments,
   postComments,
+  alterVotes,
 } = require("../models/models");
 
 function getApi(req, res) {
@@ -60,8 +61,25 @@ function addComment(req, res, next) {
     })
     .catch(next);
 }
-
 // find article to post comment too
+
+function updateVotes(req, res, next) {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (isNaN(article_id)) {
+    return res.status(400).send({ msg: "Bad Request" });
+  }
+
+  fetchArticles(article_id)
+    .then(() => {
+      return alterVotes(article_id, inc_votes);
+    })
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch(next);
+}
 
 module.exports = {
   getApi,
@@ -70,4 +88,5 @@ module.exports = {
   getAllArticles,
   getComments,
   addComment,
+  updateVotes,
 };
