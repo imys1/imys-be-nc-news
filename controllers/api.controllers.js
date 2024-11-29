@@ -8,7 +8,9 @@ const {
   alterVotes,
   fetchCommentsByID,
   deleteComment,
+
   fetchUsers,
+
 } = require("../models/models");
 
 function getApi(req, res) {
@@ -94,6 +96,7 @@ function removeComment(req, res, next) {
     .catch(next);
 }
 
+
 function getAllUsers(req, res, next) {
   fetchUsers()
     .then((users) => {
@@ -104,6 +107,8 @@ function getAllUsers(req, res, next) {
     });
 }
 
+
+
 module.exports = {
   getApi,
   getAllTopics,
@@ -113,5 +118,8 @@ module.exports = {
   addComment,
   updateVotes,
   removeComment,
+
   getAllUsers,
+
+
 };
