@@ -17,8 +17,3 @@ if (ENV === "production") {
 }
 
 module.exports = new Pool(config);
-
-
-const db = new Pool();
-module.exports = new Pool();
-
