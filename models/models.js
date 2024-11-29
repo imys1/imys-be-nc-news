@@ -22,8 +22,6 @@ function fetchArticles(articleId) {
 }
 
 function fetchAllArticles(topic, sort_by = "created_at", order = "desc") {
-  console.log(topic);
-
   const queryValues = [];
   const validSortBy = [
     "article_id",

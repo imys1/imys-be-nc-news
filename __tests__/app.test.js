@@ -104,6 +104,15 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("the comment count should be different according to the total comments in any article given", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles[6].comment_count).toBe(11);
+        expect(articles[articles.length - 1].comment_count).toBe(0);
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
