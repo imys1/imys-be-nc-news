@@ -21,7 +21,10 @@ function fetchArticles(articleId) {
     });
 }
 
-function fetchAllArticles(sort_by = "created_at", order = "desc") {
+function fetchAllArticles(topic, sort_by = "created_at", order = "desc") {
+  console.log(topic);
+
+  const queryValues = [];
   const validSortBy = [
     "article_id",
     "title",
@@ -40,7 +43,7 @@ function fetchAllArticles(sort_by = "created_at", order = "desc") {
     });
   }
 
-  const queryText = `SELECT
+  let queryText = `SELECT
   articles.article_id,
   articles.title,
   articles.author,
@@ -51,9 +54,16 @@ function fetchAllArticles(sort_by = "created_at", order = "desc") {
    CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
 FROM articles
 LEFT JOIN comments ON comments.article_id = articles.article_id
-GROUP BY articles.article_id
-ORDER BY ${sort_by} ${order};`;
-  return db.query(queryText).then(({ rows }) => {
+`;
+
+  if (topic !== undefined) {
+    queryValues.push(topic);
+    queryText += `WHERE topic LIKE $1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  } else {
+    queryText += `GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  }
+
+  return db.query(queryText, queryValues).then(({ rows }) => {
     return rows;
   });
 }

@@ -345,7 +345,11 @@ test("returns 404 error with a custom message folowing user inputting wrong endp
 });
 
 
+describe("QUERY/api/articles", () => {
+
+
 describe.only("QUERY/api/articles", () => {
+
   test("sort articles by article id in descending order", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id")
@@ -391,6 +395,22 @@ test("return 'Query request invalid!' for invalid order", () => {
       expect(res.body.msg).toBe("Invalid sort_by or order query");
     });
 });
+
+
+test("return the filtred topic by specfifec query for this case it should return cats only", () => {
+  return request(app)
+    .get("/api/articles?topic=cats")
+    .expect(200)
+    .then((res) => {
+      const articles = res.body.articles;
+      expect(articles.length).toBe(1);
+      articles.forEach((article) => {
+        console.log(article);
+        expect(article.topic).toBe("cats");
+      });
+    });
+});
+
 
 
 
