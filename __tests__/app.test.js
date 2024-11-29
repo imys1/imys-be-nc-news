@@ -323,7 +323,6 @@ test("returns a 'bad request' when trying to delete with a word instead of a num
     });
 });
 
-
 describe("GET/api/users", () => {
   test("it will return an array of users with the properties avatar url, name and the username", () => {
     return request(app)
@@ -353,12 +352,7 @@ test("returns 404 error with a custom message folowing user inputting wrong endp
     });
 });
 
-
 describe("QUERY/api/articles", () => {
-
-
-describe.only("QUERY/api/articles", () => {
-
   test("sort articles by article id in descending order", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id")
@@ -405,7 +399,6 @@ test("return 'Query request invalid!' for invalid order", () => {
     });
 });
 
-
 test("return the filtred topic by specfifec query for this case it should return cats only", () => {
   return request(app)
     .get("/api/articles?topic=cats")
@@ -419,7 +412,3 @@ test("return the filtred topic by specfifec query for this case it should return
       });
     });
 });
-
-
-
-
